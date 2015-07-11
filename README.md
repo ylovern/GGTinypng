@@ -1,7 +1,9 @@
 # GGTinypng
 批量压缩png和jpg图片python脚本
 
-使用方法
+暂不支持子文件夹里面的图片，抽时间在添加
+
+## 使用方法
 
 python3 tinypng.py -i picDocPath -o outputDocPath
 
