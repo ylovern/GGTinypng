@@ -75,8 +75,8 @@ def main():
         # print("parent is:" + parent)
         # print("filename is:" + filename)
         filePaths.append(os.path.join(parent,filename))
-        
-    pngFilePaths = filter(lambda x:os.path.splitext(x)[1]=='.png',filePaths)
+
+    pngFilePaths = filter(lambda x:os.path.splitext(x)[1]=='.png' or os.path.splitext(x)[1]=='.jpg',filePaths)
     print('Parent process %s.' % os.getpid())
     p = Pool(poolLimite)
     for fileName in pngFilePaths:
