@@ -14,6 +14,7 @@ key = "PX-pm9lAY3siS8cHIWz44zWFZHj6TtYX"
 opts, args = getopt.getopt(sys.argv[1:], "hi:o:")
 input_doc_path=""
 output_doc_path = ''
+filePaths=[]
 
 for op, value in opts:
     if op == "-i":
@@ -47,7 +48,7 @@ def getTinyPng(filePath):
       # Compression was successful, retrieve output from Location header.
       result = urlopen(response.getheader("Location"), cafile = cafile).read()
 
-      output = os.path.join(output_doc_path, os.path.split(filePath)[1])
+      output = os.path.join(output_doc_path, os.path.relpath(filePath,input_doc_path))
       open(output, "wb").write(result)
       print('完成'+output)
     else:
@@ -56,21 +57,29 @@ def getTinyPng(filePath):
       print("Compression failed")
 
 def main():
-    fileNames = [x for x in os.listdir(input_doc_path) if os.path.splitext(x)[1]=='.png']
-    absFileNames = list(map(absFilePath, fileNames))
-    # print(output_doc_path)
     global output_doc_path
     if output_doc_path == '':
-        output_doc_path = os.path.join(input_doc_path, 'tinypng')
+        output_doc_path = os.path.join(os.path.split(input_doc_path)[0], 'outputTinypng')
     if not os.path.exists(output_doc_path):
         os.mkdir(output_doc_path)
 
-    # print(input_doc_path)
-    # print(absFileNames)
+    for parent,dirnames,filenames in os.walk(input_doc_path):    #三个参数：分别返回1.父目录 2.所有文件夹名字（不含路径） 3.所有文件名字
+      for dirname in  dirnames:                       #输出文件夹信息
+        # print("parent is:" + parent)
+        # print("dirname is" + dirname)
+        outDir = os.path.join(output_doc_path,os.path.relpath(os.path.join(parent,dirname),input_doc_path))
+        if not os.path.exists(outDir):
+            os.mkdir(outDir)
 
+      for filename in filenames:                        #输出文件信息
+        # print("parent is:" + parent)
+        # print("filename is:" + filename)
+        filePaths.append(os.path.join(parent,filename))
+        
+    pngFilePaths = filter(lambda x:os.path.splitext(x)[1]=='.png',filePaths)
     print('Parent process %s.' % os.getpid())
     p = Pool(poolLimite)
-    for fileName in absFileNames:
+    for fileName in pngFilePaths:
         p.apply_async(getTinyPng, args=(fileName,))
     print('Waiting for all subprocesses done...')
     p.close()
