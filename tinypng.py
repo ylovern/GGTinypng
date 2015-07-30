@@ -11,7 +11,7 @@ poolLimite = 10
 key = "PX-pm9lAY3siS8cHIWz44zWFZHj6TtYX"
 # input = "large-input.png"
 # output = "tiny-output.png"
-opts, args = getopt.getopt(sys.argv[1:], "hi:o:")
+opts, args = getopt.getopt(sys.argv[1:], "hi:o:r:")
 input_doc_path=""
 output_doc_path = ''
 filePaths=[]
@@ -20,6 +20,9 @@ for op, value in opts:
     if op == "-i":
         input_doc_path = value
     elif op == "-o":
+        output_doc_path = value
+    elif op == "-r":
+        input_doc_path = value
         output_doc_path = value
     elif op == "-h":
         print('''
